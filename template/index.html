@@ -1,1 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GROOT Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            width: 80%;
+            max-width: 800px;
+            height: 90%;
+            background: #1c1f26;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(145deg, #4b6cb7, #182848);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            animation: slideDown 0.6s ease;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header .icon {
+            font-size: 2rem; /* Icon size */
+        }
+
+        .header .title {
+            text-transform: uppercase; /* Full caps */
+        }
+
+        /* Chat Box */
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #1f1f2b;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+            box-shadow: inset 0px 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Messages */
+        .message {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+            animation: popIn 0.3s ease;
+        }
+
+        .user-message .message-bubble {
+            background: linear-gradient(145deg, #2c5364, #0f2027);
+            color: #fff;
+        }
+
+        .bot-message .message-bubble {
+            background: linear-gradient(145deg, #394867, #4e5d7c);
+            color: #ffffff;
+        }
+
+        /* Input Form */
+        form {
+            display: flex;
+            padding: 15px 20px;
+            background: #1c1f26;
+            border-top: 1px solid #333;
+            gap: 10px;
+            align-items: center;
+            animation: slideUp 0.6s ease;
+            box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 30px;
+            font-size: 1rem;
+            background: #282c34;
+            color: #fff;
+            outline: none;
+            box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]::placeholder {
+            color: #aaa;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4b6cb7;
+            box-shadow: 0px 4px 8px rgba(75, 108, 183, 0.4);
+        }
+
+        button {
+            padding: 15px 20px;
+            background: linear-gradient(145deg, #4b6cb7, #182848);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <span class="icon">🤖</span>
+            <span class="title">Groot Chatbot</span>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                <div class="message-bubble">Welcome! 😊 I’m here to assist you. Just ask away!</div>
+            </div>
+        </div>
+        <form id="chat-form" onsubmit="handleFormSubmit(event)">
+            <input type="text" name="user_message" id="user-message" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function typeResponse(elementId, text, speed = 50) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            let index = 0;
+            element.textContent = ''; // Clear any pre-existing text
+
+            const interval = setInterval(() => {
+                element.textContent += text[index];
+                index++;
+                if (index >= text.length) {
+                    clearInterval(interval);
+                }
+            }, speed);
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const userMessage = document.getElementById('user-message').value;
+            const chatBox = document.getElementById('chat-box');
+            
+            // If user types "exit", reset the bot
+            if (userMessage.toLowerCase() === "exit") {
+                window.location.reload(); // Reload the page to reset everything
+                return;
+            }
+
+            // Add user message to the chat
+            chatBox.innerHTML += `
+                <div class="message user-message">
+                    <div class="message-bubble">${userMessage}</div>
+                </div>
+            `;
+            
+            // Clear input field
+            document.getElementById('user-message').value = '';
+
+            // Make AJAX request to get bot's response
+            fetch(`/chat?user_message=${encodeURIComponent(userMessage)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const botResponse = data.bot_response;
+
+                    // Add bot response to the chat
+                    const botMessageElement = document.createElement('div');
+                    botMessageElement.classList.add('message', 'bot-message');
+                    botMessageElement.innerHTML = `<div class="message-bubble" id="bot-response-${Date.now()}">${botResponse}</div>`;
+                    chatBox.appendChild(botMessageElement);
+
+                    // Type the response
+                    typeResponse(`bot-response-${Date.now()}`, botResponse);
+
+                    // Scroll to the bottom of the chat box
+                    scrollToBottom();
+                })
+                .catch(error => console.error('Error fetching bot response:', error));
+        }
+
+        // Scroll to the bottom when the page loads
+        window.onload = scrollToBottom;
+    </script>
+</body>
+</html>
 
